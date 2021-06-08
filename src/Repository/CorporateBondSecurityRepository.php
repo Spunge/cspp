@@ -20,21 +20,4 @@ class CorporateBondSecurityRepository extends Repository
     {
         parent::__construct($registry, CorporateBondSecurity::class);
     }
-
-    public function findAllWithDateRange(): Array {
-
-        $entityManager = $this->getEntityManager();
-
-        // This will fetch "mixed" results, "c" being an entity, from&to being scalar
-        $query = $entityManager->createQuery(
-            'SELECT c.isin, MIN(i.date) AS from, MAX(i.date) AS to
-            FROM App\Entity\CorporateBondSecurity c
-            INNER JOIN c.imports i
-            GROUP BY c.id'
-        );
-
-        // Passing Query::HYDRATE_SCALAR will merge these "mixed" results, 
-        // but prefix fields from "c" with "c_", and will omit lazy loaded relations
-        return $query->getResult();
-    }
 }

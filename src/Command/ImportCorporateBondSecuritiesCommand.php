@@ -51,6 +51,7 @@ class ImportCorporateBondSecuritiesCommand extends Command
             // If csv dump at date is not imported yet, import it now
             if( ! $import) {
                 $notice = 'Importing holdings from %s';
+                // TODO - Try catch this as 25 dec 2020 & jan 1 2020 do not have exports...
                 $this->importManager->importFromEcb($date);
             }
 

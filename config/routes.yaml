@@ -1,6 +1,0 @@
-index:
-    path: /
-    controller: App\Controller\DefaultController::index
-securities_index:
-    path: /securities/
-    controller: App\Controller\SecurityController::index
