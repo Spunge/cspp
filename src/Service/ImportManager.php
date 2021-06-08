@@ -48,7 +48,7 @@ class ImportManager
             $country = $this->entityManager->getRepository(Country::class)->findOneBy(["name" => $securityData['NCB']]);
             if( ! $country) {
                 $country = new Country();
-                $country->setName(utf8_encode($securityData['NCB']));
+                $country->setName($securityData['NCB']);
                 $this->entityManager->persist($country);
                 $this->entityManager->flush();
             }
@@ -57,7 +57,7 @@ class ImportManager
             $corporation = $this->entityManager->getRepository(Corporation::class)->findOneBy(["name" => $securityData['ISSUER_NAME_']]);
             if( ! $corporation) {
                 $corporation = new Corporation();
-                $corporation->setName(utf8_encode($securityData['ISSUER_NAME_']));
+                $corporation->setName($securityData['ISSUER_NAME_']);
                 $this->entityManager->persist($corporation);
                 $this->entityManager->flush();
             }
@@ -66,7 +66,7 @@ class ImportManager
             $corporateBondSecurity
                 ->setCountry($country)
                 ->setIssuer($corporation)
-                ->setIsin(utf8_encode($securityData['ISIN_CODE']))
+                ->setIsin($securityData['ISIN_CODE'])
                 ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE_']))
                 ->setCouponRate((float) $securityData['COUPON_RATE_*']);
 
@@ -74,7 +74,7 @@ class ImportManager
             $import->addCorporateBondSecurity($corporateBondSecurity);
         }
 
-        //$this->entityManager->flush();
+        $this->entityManager->flush();
     }
 
     public function create($date): Import

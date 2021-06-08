@@ -24,7 +24,7 @@ class Downloader
         $response = $this->client->request('GET', $url);
 
         $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->getContent();
+        $content = utf8_encode($response->getContent());
 
         switch($contentType) {
             case "text/csv":
