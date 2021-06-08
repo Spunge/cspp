@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
 use App\Repository\CorporationRepository;
 
 /**
@@ -16,7 +18,6 @@ use App\Repository\CorporationRepository;
 class Corporation
 {
     /**
-     * @Groups({"security"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -33,6 +34,13 @@ class Corporation
      * @ORM\OneToMany(targetEntity=CorporateBondSecurity::class, mappedBy="issuer", orphanRemoval=true)
      */
     private $corporateBondSecurities;
+
+    /**
+     * @Groups({"security"})
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -82,6 +90,18 @@ class Corporation
                 $corporateBondSecurity->setIssuer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
