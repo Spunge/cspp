@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CorporateBondSecurityRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use App\Repository\CorporateBondSecurityRepository;
 
 /**
  * @ORM\Entity(repositoryClass=CorporateBondSecurityRepository::class)
@@ -20,16 +23,19 @@ class CorporateBondSecurity
     private $id;
 
     /**
+     * @Groups({"security"})
      * @ORM\Column(type="string", length=12, nullable=true)
      */
     private $isin;
 
     /**
+     * @Groups({"security"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $maturityDate;
 
     /**
+     * @Groups({"security"})
      * @ORM\Column(type="float", nullable=true)
      */
     private $couponRate;
@@ -40,18 +46,21 @@ class CorporateBondSecurity
     private $imports;
 
     /**
+     * @Groups({"security"})
      * @ORM\ManyToOne(targetEntity=Corporation::class, inversedBy="corporateBondSecurities")
      * @ORM\JoinColumn(nullable=true)
      */
     private $issuer;
 
     /**
+     * @Groups({"security"})
      * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="corporateBondSecurities")
      * @ORM\JoinColumn(nullable=true)
      */
     private $country;
 
     /**
+     * @Groups({"security"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $is_floating;

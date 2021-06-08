@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
-use App\Entity\CorporateBondSecurity;
+use Doctrine\ORM\Query;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+
+use App\Entity\CorporateBondSecurity;
 
 /**
  * @method CorporateBondSecurity|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,30 @@ class CorporateBondSecurityRepository extends Repository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CorporateBondSecurity::class);
+    }
+
+    public function findAllWithDateRange(): Array {
+
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT c, MIN(i.date) AS from, MAX(i.date) AS to
+            FROM App\Entity\CorporateBondSecurity c
+            INNER JOIN c.imports i
+            GROUP BY c.id'
+        );
+
+        return $query->getResult();
+
+        /*
+        return 
+            ->andWhere('c.exampleField = :val')
+            ->setParameter('val', $value)
+            ->orderBy('c.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+         */
     }
 
     // /**

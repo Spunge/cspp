@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ImportRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use App\Repository\ImportRepository;
 
 /**
  * @ORM\Entity(repositoryClass=ImportRepository::class)
@@ -20,11 +23,13 @@ class Import
     private $id;
 
     /**
+     * @Groups({"import"})
      * @ORM\Column(type="date")
      */
     private $date;
 
     /**
+     * @Groups({"import"})
      * @ORM\ManyToMany(targetEntity=CorporateBondSecurity::class, mappedBy="imports")
      */
     private $corporateBondSecurities;

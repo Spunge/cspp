@@ -46,11 +46,11 @@ class ImportCorporateBondSecuritiesCommand extends Command
         // Try to import ECB data from 2017 till now
         while($date < $until_date) {
             $import = $this->importRepository->findOneBy(['date' => $date]);
-            $notice = 'Holdings at %s already imported';
+            $notice = 'Holdings from %s already imported';
 
             // If csv dump at date is not imported yet, import it now
             if( ! $import) {
-                $notice = 'Importing holdings at %s';
+                $notice = 'Importing holdings from %s';
                 $this->importManager->importFromEcb($date);
             }
 
