@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method CorporateBondSecurity[]    findAll()
  * @method CorporateBondSecurity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CorporateBondSecurityRepository extends ServiceEntityRepository
+class CorporateBondSecurityRepository extends Repository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -44,37 +44,49 @@ class ImportManager
                 continue;
             }
 
-            // There's entries with data missing
-            foreach(['ISSUER_NAME', 'MATURITY_DATE', 'COUPON_RATE'] as $key) {
-                if($securityData[$key] == "") {
-                    continue 2;
+            // Some securities returned by ECB only have ISIN & country set, so everything else is optional
+            $security = $this->entityManager->getRepository(CorporateBondSecurity::class)
+                ->findOneOrCreate(["isin" => $securityData['ISIN_CODE']]);
+
+            // Set country when it exists
+            if($securityData['NCB'] != "") {
+                // Find or create country & corporation
+                $country = $this->entityManager->getRepository(Country::class)
+                    ->findOneOrCreate(["name" => $securityData['NCB']]);
+                
+                $security->setCountry($country);
+            }
+
+            // Set issuer when it exists
+            if($securityData['ISSUER_NAME'] != "") {
+                $corporation = $this->entityManager->getRepository(Corporation::class)
+                    ->findOneOrCreate(["name" => $securityData['ISSUER_NAME']]);
+
+                $security->setIssuer($corporation);
+            }
+
+            if($securityData['MATURITY_DATE'] != "") {
+                $security->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE']));
+            }
+
+            if($securityData['COUPON_RATE'] != "") {
+                if( ! is_numeric($securityData['COUPON_RATE'])) {
+                    // TODO - Floating rates
+                    var_dump($securityData['COUPON_RATE']);
+                } else {
+                    $float = (float) $securityData['COUPON_RATE'];
+
+                    // TODO - there is some entries for which the rate changes somehow, this should be impossible
+                    //$existing = $security->getCouponRate();
+                    //if($existing !== null && $float != $existing) {
+                        //var_dump($float, $existing);
+                    //}
+
+                    $security->setCouponRate($float);
                 }
             }
 
-            // Find or create country & corporation
-            $country = $this->entityManager->getRepository(Country::class)
-                ->findOneOrCreate(["name" => $securityData['NCB']]);
-            $corporation = $this->entityManager->getRepository(Corporation::class)
-                ->findOneOrCreate(["name" => $securityData['ISSUER_NAME']]);
-
-            // Find or create security
-            $security = $this->entityManager->getRepository(CorporateBondSecurity::class)
-                ->findOneBy(["isin" => $securityData['ISIN_CODE']]);
-
-            if( ! $security) {
-                $security = new CorporateBondSecurity();
-
-                $date = DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE']);
-
-                $security
-                    ->setCountry($country)
-                    ->setIssuer($corporation)
-                    ->setIsin($securityData['ISIN_CODE'])
-                    ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE']))
-                    ->setCouponRate((float) $securityData['COUPON_RATE']);
-
-                $this->entityManager->persist($security);
-            }
+            $this->entityManager->persist($security);
 
             $import->addCorporateBondSecurity($security);
         }

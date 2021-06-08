@@ -20,17 +20,17 @@ class CorporateBondSecurity
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=12)
+     * @ORM\Column(type="string", length=12, nullable=true)
      */
     private $isin;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $maturityDate;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $couponRate;
 
@@ -41,13 +41,13 @@ class CorporateBondSecurity
 
     /**
      * @ORM\ManyToOne(targetEntity=Corporation::class, inversedBy="corporateBondSecurities")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $issuer;
 
     /**
      * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="corporateBondSecurities")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $country;
 
