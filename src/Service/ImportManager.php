@@ -31,6 +31,7 @@ class ImportManager
      * Import CSPP holdings CSV from ECB and import it
      */
     public function importFromEcb(DateTime $date) {
+        // Download data from ECB
         $securitiesData = $this->downloader->download($this->getEcbDumpUrl($date));
 
         $import = new Import();
@@ -49,29 +50,29 @@ class ImportManager
             $corporation = $this->entityManager->getRepository(Corporation::class)
                 ->findOneOrCreate(["name" => $securityData['ISSUER_NAME_']]);
 
-            $corporateBondSecurity = new CorporateBondSecurity();
-            $corporateBondSecurity
-                ->setCountry($country)
-                ->setIssuer($corporation)
-                ->setIsin($securityData['ISIN_CODE'])
-                ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE_']))
-                ->setCouponRate((float) $securityData['COUPON_RATE_*']);
+            // Find or create security
+            $security = $this->entityManager->getRepository(CorporateBondSecurity::class)
+                ->findOneBy(["isin" => $securityData['ISIN_CODE']]);
 
-            $this->entityManager->persist($corporateBondSecurity);
-            $import->addCorporateBondSecurity($corporateBondSecurity);
+            if( ! $security) {
+                $security = new CorporateBondSecurity();
+
+                // Some of the ECB exports are weird
+                $couponRate = array_key_exists('COUPON_RATE_*', $securityData) ? 'COUPON_RATE_*' : 'COUPON_RATE_';
+
+                $security
+                    ->setCountry($country)
+                    ->setIssuer($corporation)
+                    ->setIsin($securityData['ISIN_CODE'])
+                    ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE_']))
+                    ->setCouponRate((float) $securityData[$couponRate]);
+
+                $this->entityManager->persist($security);
+            }
+
+            $import->addCorporateBondSecurity($security);
         }
 
         $this->entityManager->flush();
-    }
-
-    public function create($date): Import
-    {
-        $import = new Import();
-        $import->setDate($date);
-
-        $this->entityManager->persist($import);
-        $this->entityManager->flush();
-
-        return $import;
     }
 }
