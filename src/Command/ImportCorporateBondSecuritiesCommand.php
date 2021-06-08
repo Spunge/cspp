@@ -42,8 +42,6 @@ class ImportCorporateBondSecuritiesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        //$entityManager = $this->getDoctrine()->getManager();
-
         $date = new DateTime();
         $date->setDate(2017, 6, 23);
         $io->writeln(sprintf('Importing %s', $date->format('d-m-Y')));

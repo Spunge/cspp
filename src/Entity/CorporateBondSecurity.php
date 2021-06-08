@@ -20,19 +20,9 @@ class CorporateBondSecurity
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=2)
-     */
-    private $ncb;
-
-    /**
      * @ORM\Column(type="string", length=12)
      */
     private $isin;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $issuer;
 
     /**
      * @ORM\Column(type="date")
@@ -49,6 +39,18 @@ class CorporateBondSecurity
      */
     private $imports;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Corporation::class, inversedBy="corporateBondSecurities")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $issuer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="corporateBondSecurities")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $country;
+
     public function __construct()
     {
         $this->imports = new ArrayCollection();
@@ -59,18 +61,6 @@ class CorporateBondSecurity
         return $this->id;
     }
 
-    public function getNcb(): ?string
-    {
-        return $this->ncb;
-    }
-
-    public function setNcb(string $ncb): self
-    {
-        $this->ncb = $ncb;
-
-        return $this;
-    }
-
     public function getIsin(): ?string
     {
         return $this->isin;
@@ -79,18 +69,6 @@ class CorporateBondSecurity
     public function setIsin(string $isin): self
     {
         $this->isin = $isin;
-
-        return $this;
-    }
-
-    public function getIssuer(): ?string
-    {
-        return $this->issuer;
-    }
-
-    public function setIssuer(string $issuer): self
-    {
-        $this->issuer = $issuer;
 
         return $this;
     }
@@ -139,6 +117,30 @@ class CorporateBondSecurity
     public function removeImport(Import $import): self
     {
         $this->imports->removeElement($import);
+
+        return $this;
+    }
+
+    public function getIssuer(): ?Corporation
+    {
+        return $this->issuer;
+    }
+
+    public function setIssuer(?Corporation $issuer): self
+    {
+        $this->issuer = $issuer;
+
+        return $this;
+    }
+
+    public function getCountry(): ?Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?Country $country): self
+    {
+        $this->country = $country;
 
         return $this;
     }
