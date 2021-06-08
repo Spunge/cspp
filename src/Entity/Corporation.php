@@ -16,6 +16,7 @@ use App\Repository\CorporationRepository;
 class Corporation
 {
     /**
+     * @Groups({"security"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")

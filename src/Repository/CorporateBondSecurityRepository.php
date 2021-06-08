@@ -25,52 +25,16 @@ class CorporateBondSecurityRepository extends Repository
 
         $entityManager = $this->getEntityManager();
 
+        // This will fetch "mixed" results, "c" being an entity, from&to being scalar
         $query = $entityManager->createQuery(
-            'SELECT c, MIN(i.date) AS from, MAX(i.date) AS to
+            'SELECT c.isin, MIN(i.date) AS from, MAX(i.date) AS to
             FROM App\Entity\CorporateBondSecurity c
             INNER JOIN c.imports i
             GROUP BY c.id'
         );
 
+        // Passing Query::HYDRATE_SCALAR will merge these "mixed" results, 
+        // but prefix fields from "c" with "c_", and will omit lazy loaded relations
         return $query->getResult();
-
-        /*
-        return 
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-         */
     }
-
-    // /**
-    //  * @return CorporateBondSecurity[] Returns an array of CorporateBondSecurity objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?CorporateBondSecurity
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

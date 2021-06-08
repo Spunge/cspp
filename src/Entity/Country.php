@@ -16,6 +16,7 @@ use App\Repository\CountryRepository;
 class Country
 {
     /**
+     * @Groups({"security"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
