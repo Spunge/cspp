@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 use App\Service\ImportManager;
 use App\Repository\ImportRepository;
@@ -36,6 +37,7 @@ class ImportCorporateBondSecuritiesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+
         // Import dumps before
         $until_date = new DateTime($input->getOption("until"));
 
@@ -43,25 +45,32 @@ class ImportCorporateBondSecuritiesCommand extends Command
         $date = new DateTime();
         $date->setDate(2017, 6, 23);
 
+        $io->title(sprintf('Importing CSPP weekly holdings from %s to %s.', $date->format('d-m-Y'), $until_date->format('d-m-Y')));
+
+        $interval = $until_date->diff($date);
+        // Add progress bar
+        $io->progressStart($interval->days / 7);
+
         // Try to import ECB data from 2017 till now
         while($date < $until_date) {
             $import = $this->importRepository->findOneBy(['date' => $date]);
-            $notice = 'Holdings from %s already imported';
 
             // If csv dump at date is not imported yet, import it now
             if( ! $import) {
-                $notice = 'Importing holdings from %s';
-                // TODO - Try catch this as 25 dec 2020 & jan 1 2020 do not have exports...
-                $this->importManager->importFromEcb($date);
+                try {
+                    $this->importManager->importFromEcb($date);
+                } catch(ClientException $e) {
+                    $io->newLine();
+                    $io->note(sprintf('Exception occurred: %s', $e->getMessage()));
+                }
             }
-
-            $io->writeln(sprintf($notice, $date->format('d-m-Y')));
 
             // ECB exports every friday, so try to download next week
             $date->add(new DateInterval("P7D"));
+            $io->progressAdvance();
         }
 
-
+        $io->progressFinish();
         $io->success(sprintf('All weekly ECB CSPP dumps imported until %s', $until_date->format('d-m-Y')));
 
         return Command::SUCCESS;
