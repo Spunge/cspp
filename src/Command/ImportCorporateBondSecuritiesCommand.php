@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use DateTime;
+use DateInterval;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use App\Service\Downloader;
 use App\Service\ImportManager;
 
 class ImportCorporateBondSecuritiesCommand extends Command
@@ -17,26 +19,26 @@ class ImportCorporateBondSecuritiesCommand extends Command
     protected static $defaultName = 'import:corporate-bond-securities';
     protected static $defaultDescription = 'Imports corporate bond security data from the ECB';
 
-    public function __construct(ImportManager $importManager)
+    public function __construct(ImportManager $importManager, Downloader $downloader)
     {
         $this->importManager = $importManager;
+        $this->downloader = $downloader;
 
         parent::__construct();
     }
 
-    private function import(DateTime $date): Void {
-        
-    }
+    // Before march 2020 there was only CSPP
+    //https://www.ecb.europa.eu/mopo/pdf/CSPPholdings_20200327.csv
+    // PEPP programme started in march 2020, so urls after 27 march 2020 use the following structure:
+    //https://www.ecb.europa.eu/mopo/pdf/CSPP_PEPP_corporate_bond_holdings_20210604.csv
+    private function getUrl(DateTime $date): String {
+        $filename = "CSPPholdings_";
+        if($date > new DateTime("2020-04-01")) {
+            $filename = "CSPP_PEPP_corporate_bond_holdings_";
+        }
 
-    /*
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+        return sprintf("https://www.ecb.europa.eu/mopo/pdf/%s%s.csv", $filename, $date->format('Ymd'));
     }
-     */
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -44,21 +46,16 @@ class ImportCorporateBondSecuritiesCommand extends Command
 
         $date = new DateTime();
         $date->setDate(2017, 6, 23);
-        $io->writeln(sprintf('Importing %s', $date->format('d-m-Y')));
+
+        while($date < new DateTime("now")) {
+            $io->writeln(sprintf('Importing %s', $this->getUrl($date)));
+            $date->add(new DateInterval("P7D"));
+        }
+
+        //$data = $this->downloader->download($url);
+        //var_dump($data);
 
         //$this->importManager->create($date);
-
-        /*
-        $arg1 = $input->getArgument('arg1');
-
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
-        }
-
-        if ($input->getOption('option1')) {
-            // ...
-        }
-         */
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
