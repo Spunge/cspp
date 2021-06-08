@@ -51,6 +51,11 @@ class CorporateBondSecurity
      */
     private $country;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $is_floating;
+
     public function __construct()
     {
         $this->imports = new ArrayCollection();
@@ -141,6 +146,18 @@ class CorporateBondSecurity
     public function setCountry(?Country $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function getIsFloating(): ?bool
+    {
+        return $this->is_floating;
+    }
+
+    public function setIsFloating(bool $is_floating): self
+    {
+        $this->is_floating = $is_floating;
 
         return $this;
     }

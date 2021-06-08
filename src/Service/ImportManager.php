@@ -70,10 +70,14 @@ class ImportManager
             }
 
             if($securityData['COUPON_RATE'] != "") {
-                if( ! is_numeric($securityData['COUPON_RATE'])) {
-                    // TODO - Floating rates
-                    var_dump($securityData['COUPON_RATE']);
-                } else {
+                // When coupon rate is not numeric, it's a string like "floater" or "FLOATING" etc.
+                // meaning this security has a variable interest rate
+                // https://www.investopedia.com/terms/f/frn.asp
+                $isFloating = ! is_numeric($securityData['COUPON_RATE']);
+
+                $security->setIsFloating($isFloating);
+
+                if( ! $isFloating) {
                     $float = (float) $securityData['COUPON_RATE'];
 
                     // TODO - there is some entries for which the rate changes somehow, this should be impossible
