@@ -16,7 +16,6 @@ use App\Repository\CountryRepository;
 class Country
 {
     /**
-     * @Groups({"security"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -24,7 +23,7 @@ class Country
     private $id;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;

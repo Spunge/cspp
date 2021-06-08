@@ -18,4 +18,17 @@ class ImportRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Import::class);
     }
+
+    public function allWithSecurityCount() {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT i.date, COUNT(c.id) as securities
+            FROM App\Entity\Import i
+            JOIN i.corporateBondSecurities c
+            GROUP BY i.id'
+        );
+
+        return $query->getResult();
+    }
 }

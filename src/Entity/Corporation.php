@@ -25,18 +25,19 @@ class Corporation
     private $id;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     * @Groups({"corporation"})
      * @ORM\OneToMany(targetEntity=CorporateBondSecurity::class, mappedBy="issuer", orphanRemoval=true)
      */
     private $corporateBondSecurities;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(type="string", length=255)
      */

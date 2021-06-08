@@ -23,44 +23,45 @@ class CorporateBondSecurity
     private $id;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="string", length=12, nullable=true)
      */
     private $isin;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $maturityDate;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="float", nullable=true)
      */
     private $couponRate;
 
     /**
+     * @Groups({"corporation"})
      * @ORM\ManyToMany(targetEntity=Import::class, inversedBy="corporateBondSecurities")
      */
     private $imports;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import"})
      * @ORM\ManyToOne(targetEntity=Corporation::class, inversedBy="corporateBondSecurities")
      * @ORM\JoinColumn(nullable=true)
      */
     private $issuer;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="corporateBondSecurities")
      * @ORM\JoinColumn(nullable=true)
      */
     private $country;
 
     /**
-     * @Groups({"security"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $is_floating;

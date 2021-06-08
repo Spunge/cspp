@@ -19,32 +19,17 @@ class CorporationRepository extends Repository
         parent::__construct($registry, Corporation::class);
     }
 
-    // /**
-    //  * @return Corporation[] Returns an array of Corporation objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+    public function allWithSecurityCount() {
+        $entityManager = $this->getEntityManager();
 
-    /*
-    public function findOneBySomeField($value): ?Corporation
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $query = $entityManager->createQuery(
+            'SELECT c.name, c.slug, COUNT(cs.id) as securities
+            FROM App\Entity\Corporation c
+            JOIN c.corporateBondSecurities cs
+            GROUP BY c.id
+            ORDER BY securities DESC'
+        );
+
+        return $query->getResult();
     }
-    */
 }
