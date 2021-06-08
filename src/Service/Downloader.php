@@ -26,12 +26,11 @@ class Downloader
         $contentType = $response->getHeaders()['content-type'][0];
         $content = $response->getContent();
 
-
         switch($contentType) {
             case "text/csv":
                 return $this->serializer->decode($content, 'csv');
                 break;
-            case "text/json":
+            case "application/json":
                 return $this->serializer->decode($content, 'json');
                 break;
             default:
