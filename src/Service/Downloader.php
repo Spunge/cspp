@@ -28,11 +28,14 @@ class Downloader
 
         switch($contentType) {
             case "text/csv":
+                // ECB exports don't always return the same headers, so replace them.
+                $lineBreak = strpos($content, "\n");
+                $headers = "NCB,ISIN_CODE,ISSUER_NAME,MATURITY_DATE,COUPON_RATE\n";
+                $content = $headers . substr($content, $lineBreak + 1);
+
                 return $this->serializer->decode($content, 'csv');
-                break;
             case "application/json":
                 return $this->serializer->decode($content, 'json');
-                break;
             default:
                 throw new Exception('Unknown content type header');
         }

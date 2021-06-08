@@ -44,11 +44,18 @@ class ImportManager
                 continue;
             }
 
+            // There's entries with data missing
+            foreach(['ISSUER_NAME', 'MATURITY_DATE', 'COUPON_RATE'] as $key) {
+                if($securityData[$key] == "") {
+                    continue 2;
+                }
+            }
+
             // Find or create country & corporation
             $country = $this->entityManager->getRepository(Country::class)
                 ->findOneOrCreate(["name" => $securityData['NCB']]);
             $corporation = $this->entityManager->getRepository(Corporation::class)
-                ->findOneOrCreate(["name" => $securityData['ISSUER_NAME_']]);
+                ->findOneOrCreate(["name" => $securityData['ISSUER_NAME']]);
 
             // Find or create security
             $security = $this->entityManager->getRepository(CorporateBondSecurity::class)
@@ -57,15 +64,14 @@ class ImportManager
             if( ! $security) {
                 $security = new CorporateBondSecurity();
 
-                // Some of the ECB exports are weird
-                $couponRate = array_key_exists('COUPON_RATE_*', $securityData) ? 'COUPON_RATE_*' : 'COUPON_RATE_';
+                $date = DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE']);
 
                 $security
                     ->setCountry($country)
                     ->setIssuer($corporation)
                     ->setIsin($securityData['ISIN_CODE'])
-                    ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE_']))
-                    ->setCouponRate((float) $securityData[$couponRate]);
+                    ->setMaturityDate(DateTime::createFromFormat('d/m/Y', $securityData['MATURITY_DATE']))
+                    ->setCouponRate((float) $securityData['COUPON_RATE']);
 
                 $this->entityManager->persist($security);
             }
