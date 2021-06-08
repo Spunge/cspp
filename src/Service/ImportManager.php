@@ -43,24 +43,11 @@ class ImportManager
                 continue;
             }
 
-            // TODO - Wouldn't it be nicer to extend the EntityRepository for this logic?
-            // Find or create corporation
-            $country = $this->entityManager->getRepository(Country::class)->findOneBy(["name" => $securityData['NCB']]);
-            if( ! $country) {
-                $country = new Country();
-                $country->setName($securityData['NCB']);
-                $this->entityManager->persist($country);
-                $this->entityManager->flush();
-            }
-
-            // Find or create corporation
-            $corporation = $this->entityManager->getRepository(Corporation::class)->findOneBy(["name" => $securityData['ISSUER_NAME_']]);
-            if( ! $corporation) {
-                $corporation = new Corporation();
-                $corporation->setName($securityData['ISSUER_NAME_']);
-                $this->entityManager->persist($corporation);
-                $this->entityManager->flush();
-            }
+            // Find or create country & corporation
+            $country = $this->entityManager->getRepository(Country::class)
+                ->findOneOrCreate(["name" => $securityData['NCB']]);
+            $corporation = $this->entityManager->getRepository(Corporation::class)
+                ->findOneOrCreate(["name" => $securityData['ISSUER_NAME_']]);
 
             $corporateBondSecurity = new CorporateBondSecurity();
             $corporateBondSecurity
