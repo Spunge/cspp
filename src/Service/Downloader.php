@@ -19,7 +19,7 @@ class Downloader
         $this->serializer = new Serializer([new ObjectNormalizer()], $encoders);
     }
 
-    public function download($url): Array
+    public function download(string $url): Array
     {
         $response = $this->client->request('GET', $url);
 

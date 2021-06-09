@@ -41,7 +41,6 @@ class CorporateBondSecurity
     private $couponRate;
 
     /**
-     * @Groups({"corporation"})
      * @ORM\ManyToMany(targetEntity=Import::class, inversedBy="corporateBondSecurities")
      */
     private $imports;

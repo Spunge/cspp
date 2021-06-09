@@ -37,7 +37,6 @@ class ImportCorporateBondSecuritiesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-
         // Import dumps before
         $until_date = new DateTime($input->getOption("until"));
 

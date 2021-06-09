@@ -23,7 +23,7 @@ class Country
     private $id;
 
     /**
-     * @Groups({"security", "import"})
+     * @Groups({"security", "import", "corporation"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;

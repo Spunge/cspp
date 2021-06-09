@@ -23,7 +23,7 @@ class ImportController extends AbstractController
     }
 
     /**
-     * There's also converters for things like this
+     * There's also converters for things like datetime parameters e.d.
      * https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html
      *
      * @Route("/import/{date}", name="import_detail")
